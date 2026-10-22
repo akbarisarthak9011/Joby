@@ -136,7 +136,8 @@ const state = {
   activeModal: null, // null | 'add_app' | 'edit_app' | 'relance' | 'interview_kit'
   modalData: null,
   rehearsalMode: false,
-  activeKitTab: 'pitch'
+  activeKitTab: 'pitch',
+  memory: { available: false, memories: [], promptBlock: '', metrics: null, loading: false, error: '', modal: null, runId: null }
 };
 
 if (state.cv && Array.isArray(state.cv.education)) {
@@ -222,8 +223,8 @@ function localizeCv(){const labels=cvLabels();document.querySelectorAll('.cv-sec
 const IS_VITE_DEV = /^51\d{2}$/.test(window.location.port);
 const APIS_BASE = IS_VITE_DEV ? 'http://127.0.0.1:3017' : '';
 async function syncAiven(path, payload, method='POST'){try{const response=await fetch(`${APIS_BASE}/api/data/${path}`,{method,headers:{'Content-Type':'application/json'},body:payload===undefined?undefined:JSON.stringify(payload)});if(!response.ok)throw new Error(`Data service returned ${response.status}`);return await response.json();}catch(error){console.info('Joby is using local browser storage:',error.message);return null;}}
-async function hydrateJobyData(){try{const status=await syncAiven('status',undefined,'GET');if(!status)return;state.dataStatus=status.connected?'Aiven PostgreSQL connected':status.configured?'Aiven unavailable · using local storage':'Local demo storage · Aiven not connected';const badge=$('#data-status');if(badge)badge.textContent=state.dataStatus;const cvBadge=$('#cv-status');if(cvBadge)cvBadge.textContent=status.connected?'Saved in Aiven':'Saved locally';if(status.connected){const data=await syncAiven('state',undefined,'GET');if(data?.baseCv){state.baseCv=data.baseCv;persistBaseCv();if(!state.adapted){state.cv=JSON.parse(JSON.stringify(data.baseCv));save();}}else{void syncAiven('base-cv',{cv:state.baseCv},'PUT');}if(data?.jobSnapshot){localStorage.setItem('joby-job-snapshot',JSON.stringify(data.jobSnapshot));state.job=data.jobSnapshot.text;localStorage.setItem('joby-current-job',state.job);state.jobSource=data.jobSnapshot.source||'user';localStorage.setItem('joby-job-source',state.jobSource);}if(data?.lastRun){localStorage.setItem('joby-last-run',JSON.stringify(data.lastRun));if(data.lastRun.cv){state.cv=data.lastRun.cv;state.adapted=true;localStorage.setItem(TAILORED_CV_KEY,JSON.stringify(state.cv));}}shell();}}catch(error){state.dataStatus='Local demo storage · Aiven not connected';}}
-function persistRunToAiven(run, cv){void syncAiven('tailoring-runs',{id:'run_'+Date.now(),snapshotId:JSON.parse(localStorage.getItem('joby-job-snapshot')||'null')?.id||null,source:run.source,baseline:run.before,result:{metrics:run.after,cv},ranAt:run.ranAt});}
+async function hydrateJobyData(){try{const status=await syncAiven('status',undefined,'GET');if(!status)return;state.dataStatus=status.connected?'Aiven PostgreSQL connected':status.configured?'Aiven unavailable · using local storage':'Local demo storage · Aiven not connected';const badge=$('#data-status');if(badge)badge.textContent=state.dataStatus;const cvBadge=$('#cv-status');if(cvBadge)cvBadge.textContent=status.connected?'Saved in Aiven':'Saved locally';if(status.memory){state.memory.available=true;void fetchApplications();void refreshMemoryLedger();}if(status.connected){const data=await syncAiven('state',undefined,'GET');if(data?.baseCv){state.baseCv=data.baseCv;persistBaseCv();if(!state.adapted){state.cv=JSON.parse(JSON.stringify(data.baseCv));save();}}else{void syncAiven('base-cv',{cv:state.baseCv},'PUT');}if(data?.jobSnapshot){localStorage.setItem('joby-job-snapshot',JSON.stringify(data.jobSnapshot));state.job=data.jobSnapshot.text;localStorage.setItem('joby-current-job',state.job);state.jobSource=data.jobSnapshot.source||'user';localStorage.setItem('joby-job-source',state.jobSource);}if(data?.lastRun){localStorage.setItem('joby-last-run',JSON.stringify(data.lastRun));if(data.lastRun.cv){state.cv=data.lastRun.cv;state.adapted=true;localStorage.setItem(TAILORED_CV_KEY,JSON.stringify(state.cv));}}shell();}}catch(error){state.dataStatus='Local demo storage · Aiven not connected';}}
+function persistRunToAiven(run, cv, id='run_'+Date.now()){return syncAiven('tailoring-runs',{id,snapshotId:JSON.parse(localStorage.getItem('joby-job-snapshot')||'null')?.id||null,source:run.source,baseline:run.before,result:{metrics:run.after,cv},ranAt:run.ranAt});}
 
 async function fetchApplications() {
   try {
@@ -334,7 +335,7 @@ function extractCompanyFromJob(text) {
   const clean = text.trim();
   const match = clean.match(/(?:chez|at|rejoindre|société|entreprise|company)\s+([A-Z][A-Za-z0-9&.\-_]{1,25})/i) ||
                 clean.match(/([A-Z][A-Za-z0-9&.\-_]{1,25})\s+(?:recrute|cherche|is hiring)/i);
-  return match ? match[1].trim() : 'Company';
+  return match ? match[1].trim().replace(/[.\-_]+$/, '') : 'Company';
 }
 
 async function saveCurrentJobToTracker() {
@@ -1403,6 +1404,7 @@ function shell() {
           <section class="joby-card base-card"><div class="joby-card-head"><div class="joby-icon mint">${icon('cv')}</div><div><p class="eyebrow">YOUR SOURCE OF TRUTH</p><h2>Base CV</h2></div><span class="joby-status"><i></i> <span id="cv-status">${state.dataStatus?.startsWith('Aiven')?'Saved in Aiven':'Saved locally'}</span></span></div><p class="joby-card-copy">One English CV, used as the source for every application.</p><div class="base-person"><div class="avatar-initials">${esc((state.cv.personal?.name || 'A').split(/\s+/).map(x=>x[0]).join('').slice(0,2))}</div><div><strong>${esc(state.cv.personal?.name || 'Alex Morgan')}</strong><span>${esc(state.cv.personal?.role || 'Your professional profile')}</span></div></div><button class="button secondary full-button" id="scroll-to-cv">Review Base CV <span>↓</span></button><div class="joby-card-foot"><button class="text-button" id="upload-base-cv">Upload a different CV</button><input id="base-cv-file" type="file" accept="application/json" hidden/><button class="text-button" id="reset">Restore demo CV</button></div></section>
           <section class="joby-card job-card"><div class="joby-card-head"><div class="joby-icon peach">${icon('target')}</div><div><p class="eyebrow">ROLE TO EXPLORE</p><h2>Job description</h2></div></div><label class="field-label" for="job">Paste the job posting</label><textarea id="job" rows="8" placeholder="Paste the complete job description here…">${esc(state.job)}</textarea><div class="job-source"><span class="source-pulse"></span><div><strong>${snapshot ? (dataChanged ? 'New version detected' : 'Saved job snapshot') : 'Recorded demo scenario · sample posting'}</strong><small>${snapshot ? `Last captured ${esc(savedAt)}` : 'Replace this sample with a public job posting'}</small></div></div><button class="button secondary full-button" id="save-job-snapshot">${snapshot ? (dataChanged ? 'Capture updated job details' : 'Refresh job snapshot') : 'Save job snapshot'} <span>↻</span></button><p class="micro-note">This screen starts with a recorded sample posting. Paste a public job description to create your own snapshot. Joby does not fetch external pages in this demo.</p></section>
           <section class="joby-agent-card"><div class="agent-head"><span class="agent-spark">✳</span><div><p class="eyebrow">JOBY AGENT</p><h2>Ground every suggestion</h2></div></div><p>Joby asks the agent to tie each change to Base CV evidence. Review the result for unsupported claims.</p><label class="field-label" for="deepseek-key">DeepSeek API key <span>optional</span></label><input type="password" id="deepseek-key" value="${esc(state.deepseekKey || '')}" placeholder="Add a key for live tailoring" autocomplete="off"/><button class="button joby-cta" id="auto-adapt-job">${lastRun ? 'Tailor this CV again' : 'Tailor my CV'} <span>↗</span></button><button class="joby-link-button" id="open-ai-adapt">Copy prompt and open AI assistant <span>↗</span></button><button class="joby-link-button" id="paste-json">Paste an AI result into Joby</button><p class="micro-note">Review every suggestion before applying it. Missing qualifications stay visible as gaps.</p></section>
+          ${memoryLedgerMarkup()}
           <section class="joby-data-strip"><span class="data-glyph">DB</span><div><strong>Data stays inspectable</strong><p>${snapshot ? `1 job snapshot · ${lastRun ? '1 or more saved tailoring runs' : 'No tailoring runs yet'}` : 'Your CV and job text stay in this browser.'}</p><small id="data-status">${esc(state.dataStatus||'Local demo storage · Aiven not connected')}</small></div></section>
         </aside>
         <section class="joby-main">
@@ -1414,7 +1416,7 @@ function shell() {
         </section>
       </div>
     </main>
-    <div id="modal-container"></div><div class="toast" role="status"></div>`;
+    <div id="modal-container">${memoryModalMarkup()}</div><div class="toast" role="status"></div>`;
   bind(); renderPreview();
 }
 function ats() { const text = JSON.stringify(state.cv).toLowerCase(); const job = state.job.toLowerCase(); const stopwords=new Set(['with','that','this','will','your','from','have','they','you','lead','role','company','looking','about','please','apply','their','there','what','team','work','join','also','more','than','each','been','make','need','must','able','like','would','could','some','other','these','those','very','just','into','over','such','well','should','through','being','both','after','before','between','nous','pour','dans','votre','notre','vous','nous','avec','plus','sont','chez','tout','tous','toute','toutes','cette','leur','encore','mais','sans','sous','selon','comme','dans','etes','avez','sera','poste','offre','sein','missions','profil','recherche','candidat','candidature','equipe','entreprise']); const keywords = [...new Set((job.match(/[a-z][a-z+#&]{3,}/g)||[]).filter(k=>!stopwords.has(k)))]; const hits=keywords.filter(k=>text.includes(k)); let score=keywords.length?Math.round(hits.length/keywords.length*100):0; return {score, keywords, hits}; }
@@ -2099,6 +2101,8 @@ async function autoAdaptWithDeepSeek(track = 'alternance') {
   toast(`Connecting to DeepSeek AI for ${trackLabel} adaptation...`);
 
   try {
+    const runId = 'run_' + Date.now();
+    if (state.memory.available) await refreshMemoryLedger({ runId, quiet: true });
     const prompt = promptText(track);
     const apiEndpoint = `${APIS_BASE}/api/adapt-deepseek`;
     
@@ -2141,6 +2145,8 @@ async function autoAdaptWithDeepSeek(track = 'alternance') {
     }
 
     const parsed = cleanAndParseJson(rawContent);
+    const usedMemoryRefs = Array.isArray(parsed?._memoryRefsUsed) ? parsed._memoryRefsUsed.map(String) : [];
+    if (parsed) delete parsed._memoryRefsUsed;
     const beforeMetrics=withPreviewCv(state.baseCv,()=>ats());
     const next = normalizeCvObject(parsed, 'job');
 
@@ -2149,7 +2155,7 @@ async function autoAdaptWithDeepSeek(track = 'alternance') {
     const runAt=new Date().toISOString();
     const runRecord={ranAt:runAt,source:'api',before:{matched:beforeMetrics.hits.length,total:beforeMetrics.keywords.length},after:{matched:afterMetrics.hits.length,total:afterMetrics.keywords.length},jobHash:btoa(unescape(encodeURIComponent(state.job||''))).slice(0,22)};
     localStorage.setItem('joby-last-run',JSON.stringify(runRecord));
-    persistRunToAiven(runRecord,state.cv);
+    void persistRunToAiven(runRecord,state.cv,runId).then(()=>markMemoryCitations(runId,usedMemoryRefs));
     state.adapted = true;
     state.tab = 'adapted';
     settings.coverLetter = false; // Always keep cover letter OFF by default until user explicitly activates it
@@ -2220,11 +2226,151 @@ function promptText(track='alternance'){
     `=== TARGET DETAILS (company description, job offer, or target context) ===`,
     targetDetails,
     ``,
+    ...(state.memory?.promptBlock ? [`=== ${state.memory.promptBlock}`, ``] : []),
     `=== PRIORITY INSTRUCTION (overrides all rules above if conflict) ===`,
     state.priority || 'None.'
   ].join('\n');
 }
 function toast(msg){const t=$('.toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+// ==========================================
+// CAREER MEMORY LEDGER
+// ==========================================
+const MEMORY_KIND_LABELS={SKILL:'Skill',FEEDBACK:'Feedback',PROFILE_FACT:'Profile',APPLICATION_OUTCOME:'Outcome',PITCH_LEARNING:'Pitch'};
+const MEMORY_STATUSES=['ALL','ACTIVE','STALE','SUPERSEDED','CONTRADICTED','ARCHIVED'];
+const pts=v=>v==null?'–':`${v>=0?'+':''}${Math.round(v*100)} pts`;
+const shortDate=v=>new Date(v).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+async function memoryApi(path,payload,method='POST'){
+  const res=await fetch(`${APIS_BASE}/api/memory${path}`,{method,headers:{'Content-Type':'application/json'},body:payload===undefined?undefined:JSON.stringify(payload)});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.error||`Memory service returned ${res.status}`);
+  return data;
+}
+function renderMemoryLedger(){const el=$('#memory-ledger');if(el)el.outerHTML=memoryLedgerMarkup();}
+function renderMemoryModal(){const el=$('#modal-container');if(el)el.innerHTML=memoryModalMarkup();}
+async function refreshMemoryLedger({runId=null,quiet=false}={}){
+  if(!state.memory.available)return null;
+  const job=String(state.job||'').trim();
+  state.memory.loading=!quiet;if(!quiet)renderMemoryLedger();
+  try{
+    const [retrieval,metrics]=await Promise.all([
+      job?memoryApi('/retrieve',{jobDescription:job,runId}):Promise.resolve({memories:[],promptBlock:''}),
+      memoryApi('/metrics',undefined,'GET').catch(()=>state.memory.metrics)
+    ]);
+    Object.assign(state.memory,{memories:retrieval.memories||[],promptBlock:retrieval.promptBlock||'',runId,metrics,error:''});
+    return retrieval;
+  }catch(error){state.memory.error=error.message;return null;}
+  finally{state.memory.loading=false;renderMemoryLedger();}
+}
+async function markMemoryCitations(runId,refs){
+  const used=state.memory.memories.filter(m=>refs.includes(m.ref));
+  state.memory.memories.forEach(m=>{m.cited=refs.includes(m.ref);});
+  if(!state.memory.available)return;
+  try{if(used.length)await memoryApi(`/runs/${encodeURIComponent(runId)}/citations`,{memoryIds:used.map(m=>m.id)});state.memory.metrics=await memoryApi('/metrics',undefined,'GET');}catch(error){console.info('Memory citation skipped:',error.message);}
+  renderMemoryLedger();
+}
+function memorySparkline(runs){
+  const list=(runs||[]).filter(r=>r.coverageAfter!=null).slice(-12);
+  if(list.length<2)return '<p class="memory-empty">The coverage trend appears after two tailoring runs.</p>';
+  const w=300,h=46,step=w/(list.length-1),y=v=>(h-5-v*(h-10)).toFixed(1);
+  return `<svg class="memory-spark" viewBox="-5 0 ${w+10} ${h}" role="img" aria-label="Keyword coverage per tailoring run (filled dots used memory)"><polyline points="${list.map((r,i)=>`${(i*step).toFixed(1)},${y(r.coverageAfter)}`).join(' ')}"/>${list.map((r,i)=>`<circle cx="${(i*step).toFixed(1)}" cy="${y(r.coverageAfter)}" r="3.5" class="${r.memoryAssisted?'assisted':''}"><title>${esc(shortDate(r.ranAt))} · ${Math.round(r.coverageAfter*100)}% keyword coverage · ${r.memoryAssisted?`${r.retrieved} memories, ${r.cited} cited`:'no memory used'}</title></circle>`).join('')}</svg>`;
+}
+function memoryItemMarkup(m){
+  const sim=Math.round((m.similarity||0)*100);
+  const conflict=(m.attributes?.conflictsWith||[]).length>0;
+  const gap=m.attributes?.polarity==='gap';
+  const match=m.matchedRequirement||'';
+  return `<li class="memory-item kind-${esc(m.kind.toLowerCase())}${m.status==='STALE'?' stale':''}"><div class="memory-top"><span class="memory-ref">${esc(m.ref||'')}</span><span class="memory-kind">${esc(MEMORY_KIND_LABELS[m.kind]||m.kind)}${gap?' · gap':''}</span>${m.cited?'<span class="memory-flag cited">✓ Used in draft</span>':''}${m.status==='STALE'?'<span class="memory-flag stale">Stale</span>':''}${conflict?'<span class="memory-flag conflict">Conflict</span>':''}<span class="memory-sim" title="Similarity to this job">${sim}%</span></div><p>${esc(m.content)}</p><div class="memory-bar"><i style="width:${Math.max(4,sim)}%"></i></div>${match?`<small class="memory-match">Matched: “${esc(match.slice(0,90))}${match.length>90?'…':''}”</small>`:''}<div class="memory-actions"><button data-memory-action="confirm" data-id="${esc(m.id)}" title="${conflict?'Keep this one and retire the conflicting memory':'Still true: raise confidence'}">Confirm</button><button data-memory-action="archive" data-id="${esc(m.id)}">Dismiss</button><button data-memory-action="history" data-id="${esc(m.id)}">History</button></div></li>`;
+}
+function memoryLedgerMarkup(){
+  const mem=state.memory;const m=mem.metrics||{};
+  const total=Object.values(m.statusCounts||{}).reduce((a,b)=>a+b,0);
+  const head=`<div class="joby-card-head"><div class="joby-icon lilac">${icon('sparkles')}</div><div><p class="eyebrow">CAREER MEMORY</p><h2>Memory Ledger</h2></div><span class="joby-status"><i class="${mem.available?'':'off'}"></i> ${mem.available?`${m.statusCounts?.ACTIVE||0} active`:'Offline'}</span></div>`;
+  if(!mem.available)return `<section class="joby-card memory-ledger" id="memory-ledger">${head}<p class="joby-card-copy">Connect Aiven PostgreSQL with the pgvector extension so Joby can remember skills, outcomes and recruiter feedback between sessions.</p></section>`;
+  const gaps=m.gaps||{total:0,closed:0};const lift=m.averageLift||{};
+  const list=mem.loading?'<p class="memory-empty">Searching memory…</p>':mem.error?`<p class="memory-empty error">${esc(mem.error)}</p>`:mem.memories.length?`<ol class="memory-list">${mem.memories.map(memoryItemMarkup).join('')}</ol>`:'<p class="memory-empty">No relevant memories for this job yet. Log feedback after each application and Joby will learn from it.</p>';
+  return `<section class="joby-card memory-ledger" id="memory-ledger">${head}<p class="joby-card-copy">The memories the agent will use for the next draft, ranked by relevance to this job.</p><div class="memory-stats"><div><small>Coverage lift</small><strong>${pts(lift.withMemory)}</strong><span>${lift.withoutMemory==null?'with memory':`vs ${pts(lift.withoutMemory)} without`}</span></div><div><small>Gaps closed</small><strong>${gaps.closed}<i> / ${gaps.total}</i></strong><span>from feedback</span></div><div><small>Cited in drafts</small><strong>${m.citations?.cited||0}<i> / ${m.citations?.retrieved||0}</i></strong><span>retrievals</span></div></div>${memorySparkline(m.runs)}<div class="memory-subhead"><strong>Retrieved for this job</strong><button class="text-button" data-memory-action="refresh">${icon('refresh')} Refresh</button></div>${list}<div class="memory-buttons"><button class="button secondary full-button" data-memory-action="open-feedback">What did the recruiter say? <span>+</span></button><div class="joby-card-foot"><button class="text-button" data-memory-action="open-add">Add skill or evidence</button><button class="text-button" data-memory-action="open-all">All memories (${total})</button></div></div></section>`;
+}
+function memoryResultMarkup(results){
+  if(!results)return '';
+  const labels={created:'Learned',confirmed:'Reinforced'};
+  const changeLabels={superseded:'Replaced',gap_closed:'Gap closed',conflict_flagged:'Conflict flagged'};
+  return `<div class="memory-result"><strong>What Joby learned</strong><ul>${results.map(r=>`<li><span class="memory-flag cited">${esc(labels[r.action]||r.action)}</span> ${esc(r.memory?.content||'')}${(r.changes||[]).map(c=>`<div class="memory-change"><span class="memory-flag ${c.action==='conflict_flagged'?'conflict':'stale'}">${esc(changeLabels[c.action]||c.action)}</span> ${esc(c.content)}</div>`).join('')}</li>`).join('')}</ul></div>`;
+}
+function memoryModalMarkup(){
+  const modal=state.memory.modal;if(!modal)return '';
+  let title='',body='';
+  if(modal.type==='feedback'){
+    title='What did the recruiter say?';
+    const apps=state.applications||[];const company=extractCompanyFromJob(state.job);
+    body=`<p class="memory-modal-lead">Log the outcome while it is fresh. Joby turns it into memories and checks them against what it already knows.</p><form id="memory-feedback-form" class="memory-form">${apps.length?`<label>Application <span>optional</span><select name="applicationId"><option value="">Current job description</option>${apps.map(a=>`<option value="${esc(a.id)}">${esc(a.company)} / ${esc(a.role)}</option>`).join('')}</select></label>`:''}<div class="memory-form-row"><label>Company <input name="company" value="${esc(company==='Company'?'':company)}" placeholder="Acme"/></label><label>Role <input name="role" value="${esc(jobTitle())}" placeholder="Data Analyst"/></label></div><label>Outcome <select name="outcome"><option value="rejected">Rejected</option><option value="interview">Got an interview</option><option value="offer">Offer</option><option value="no_response">No response</option><option value="other">Other</option></select></label><label>Recruiter feedback <textarea name="feedback" rows="4" required placeholder="e.g. Rejected because I lacked Power BI experience; they liked my SEO case study."></textarea></label><p class="memory-form-note">${state.deepseekKey?'DeepSeek splits this into separate memories.':'Add a DeepSeek key in the agent card for finer extraction. Without one, Joby stores the feedback as a single memory.'} The job description is attached as context.</p><button class="button joby-cta" type="submit">Save to memory <span>↗</span></button></form>${memoryResultMarkup(modal.result)}`;
+  }else if(modal.type==='add'){
+    title='Add skill or evidence';
+    body=`<p class="memory-modal-lead">New evidence replaces older memories on the same subject. For example, an advanced SQL project retires “intermediate SQL” and closes a matching feedback gap.</p><form id="memory-add-form" class="memory-form"><label>Type <select name="kind"><option value="SKILL">Skill or project evidence</option><option value="PITCH_LEARNING">Pitch learning</option><option value="PROFILE_FACT">Profile fact or preference</option></select></label><label>Memory <textarea name="content" rows="3" required placeholder="e.g. Advanced SQL - built a 40-table analytics warehouse with window functions"></textarea></label><label>Level <span>optional</span><input name="level" placeholder="advanced"/></label><button class="button joby-cta" type="submit">Save to memory <span>↗</span></button></form>${memoryResultMarkup(modal.result)}`;
+  }else if(modal.type==='all'){
+    title='All memories';
+    const items=modal.items||[];const filter=modal.filter||'ALL';const byId=Object.fromEntries(items.map(m=>[m.id,m]));
+    const shown=items.filter(m=>filter==='ALL'||m.status===filter);
+    body=`<div class="memory-filter">${MEMORY_STATUSES.map(s=>`<button class="${s===filter?'active':''}" data-memory-action="filter" data-status="${s}">${s[0]+s.slice(1).toLowerCase()}<i>${s==='ALL'?items.length:items.filter(m=>m.status===s).length}</i></button>`).join('')}</div>${modal.loading?'<p class="memory-empty">Loading…</p>':shown.length?`<ul class="memory-all">${shown.map(m=>`<li class="status-${esc(m.status.toLowerCase())}"><div class="memory-top"><span class="memory-kind">${esc(MEMORY_KIND_LABELS[m.kind]||m.kind)}</span><span class="memory-status">${esc(m.status)}</span><span class="memory-sim">${Math.round(m.confidence*100)}% confidence</span></div><p>${esc(m.content)}</p>${m.supersededBy&&byId[m.supersededBy]?`<small class="memory-match">→ ${m.attributes?.resolution==='gap_closed'?'Gap closed by':'Replaced by'}: ${esc(byId[m.supersededBy].content)}</small>`:''}<div class="memory-actions"><small>${esc(m.subjectKey)} · ${esc(shortDate(m.createdAt))} · retrieved ${m.retrievalCount}×</small>${['ARCHIVED','CONTRADICTED','SUPERSEDED'].includes(m.status)?`<button data-memory-action="restore" data-id="${esc(m.id)}">Restore</button>`:`<button data-memory-action="archive" data-id="${esc(m.id)}">Dismiss</button>`}<button data-memory-action="history" data-id="${esc(m.id)}">History</button></div></li>`).join('')}</ul>`:'<p class="memory-empty">Nothing here yet.</p>'}`;
+  }else if(modal.type==='history'){
+    title='Memory history';
+    body=`<p class="memory-modal-lead">How this memory changed over time, oldest first.</p>${modal.items?`<ol class="memory-history">${modal.items.map(m=>`<li class="status-${esc(m.status.toLowerCase())}"><span class="memory-status">${esc(m.status)}</span><p>${esc(m.content)}</p><small>Added ${esc(shortDate(m.createdAt))}${m.validUntil?` · retired ${esc(shortDate(m.validUntil))}`:''}</small></li>`).join('')}</ol>`:'<p class="memory-empty">Loading…</p>'}<button class="text-button" data-memory-action="open-all">← All memories</button>`;
+  }
+  return `<div class="memory-modal-overlay" data-memory-action="overlay"><div class="memory-modal" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="memory-modal-head"><h2>${esc(title)}</h2><button class="memory-modal-close" data-memory-action="close-modal" aria-label="Close">${icon('clear')}</button></div>${body}</div></div>`;
+}
+async function openMemoryModal(type,extra={}){
+  state.memory.modal={type,...extra};renderMemoryModal();
+  try{
+    if(type==='all'){state.memory.modal.loading=true;renderMemoryModal();const data=await memoryApi('',undefined,'GET');if(state.memory.modal?.type==='all')Object.assign(state.memory.modal,{items:data.memories,loading:false});}
+    if(type==='history'){const data=await memoryApi(`/${encodeURIComponent(extra.id)}/history`,undefined,'GET');if(state.memory.modal?.type==='history')state.memory.modal.items=data.history;}
+  }catch(error){toast(error.message);if(state.memory.modal)state.memory.modal.loading=false;}
+  renderMemoryModal();
+}
+document.addEventListener('click',async event=>{
+  const el=event.target.closest('[data-memory-action]');if(!el)return;
+  const action=el.dataset.memoryAction;
+  if(action==='overlay'&&event.target!==el)return;
+  if(action==='overlay'||action==='close-modal'){state.memory.modal=null;renderMemoryModal();return;}
+  if(action==='refresh'){void refreshMemoryLedger();return;}
+  if(action==='open-feedback'){void openMemoryModal('feedback');return;}
+  if(action==='open-add'){void openMemoryModal('add');return;}
+  if(action==='open-all'){void openMemoryModal('all');return;}
+  if(action==='history'){void openMemoryModal('history',{id:el.dataset.id});return;}
+  if(action==='filter'){state.memory.modal.filter=el.dataset.status;renderMemoryModal();return;}
+  if(['confirm','archive','restore'].includes(action)){
+    try{
+      await memoryApi(`/${encodeURIComponent(el.dataset.id)}`,{action},'PATCH');
+      toast(action==='confirm'?'Memory confirmed.':action==='archive'?'Memory dismissed. Joby will stop using it.':'Memory restored.');
+      if(state.memory.modal?.type==='all')await openMemoryModal('all',{filter:state.memory.modal.filter});
+      await refreshMemoryLedger({quiet:true});
+    }catch(error){toast(error.message);}
+  }
+});
+document.addEventListener('change',event=>{
+  if(!event.target.matches('#memory-feedback-form select[name="applicationId"]'))return;
+  const app=(state.applications||[]).find(a=>a.id===event.target.value);if(!app)return;
+  const form=event.target.form;form.company.value=app.company||'';form.role.value=app.role||'';
+});
+document.addEventListener('submit',async event=>{
+  const form=event.target;if(form.id!=='memory-feedback-form'&&form.id!=='memory-add-form')return;
+  event.preventDefault();
+  const data=Object.fromEntries(new FormData(form));const button=form.querySelector('[type="submit"]');const modal=state.memory.modal;
+  button.disabled=true;button.innerHTML='<span>Learning…</span>';
+  try{
+    if(form.id==='memory-feedback-form'){
+      const app=(state.applications||[]).find(a=>a.id===data.applicationId);
+      const res=await memoryApi('/feedback',{...data,applicationId:data.applicationId||null,jobDescription:app?.jobDescription||state.job,jobSnapshotId:JSON.parse(localStorage.getItem('joby-job-snapshot')||'null')?.id||null,apiKey:state.deepseekKey||''});
+      modal.result=res.results;
+    }else{
+      const res=await memoryApi('',{kind:data.kind,content:data.content,level:data.level||undefined});
+      modal.result=[res];
+    }
+    if(state.memory.modal===modal)renderMemoryModal();toast('Memory saved. Joby will use it for the next draft.');
+    void refreshMemoryLedger({quiet:true});
+  }catch(error){toast(error.message);button.disabled=false;button.innerHTML='Save to memory <span>↗</span>';}
+});
+let memoryRefreshTimer=null;
+document.addEventListener('input',event=>{if(!event.target.matches('#job')||!state.memory.available)return;clearTimeout(memoryRefreshTimer);memoryRefreshTimer=setTimeout(()=>refreshMemoryLedger({quiet:true}),1200);});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.memory.modal){state.memory.modal=null;renderMemoryModal();}});
+
 shell();
 void hydrateJobyData();
-
