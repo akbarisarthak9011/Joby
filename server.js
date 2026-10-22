@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import pg from 'pg';
 import { fileURLToPath } from 'url';
+import { MEMORY_SCHEMA_SQL, ingestFeedback, storeMemory, retrieveMemories, memoryPromptBlock, markRunCitations, listMemories, updateMemory, memoryHistory, markStaleMemories, memoryMetrics, warmEmbeddings, EMBEDDING_MODEL } from './memory-engine.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +22,7 @@ app.use(express.json({ limit: '50mb' }));
 const databaseUrl = process.env.AIVEN_DATABASE_URL || process.env.DATABASE_URL || '';
 const pool = databaseUrl ? new pg.Pool({
     connectionString: databaseUrl,
-    ssl: { rejectUnauthorized: true },
+    ssl: /sslmode=disable/i.test(databaseUrl) ? false : { rejectUnauthorized: true },
     max: 5,
     connectionTimeoutMillis: 5000
 }) : null;
@@ -52,9 +53,64 @@ const dbReady = pool ? pool.query(`
     return false;
 }) : Promise.resolve(false);
 
-app.get('/api/data/status', async (req, res) => {
-    res.json({ configured: Boolean(pool), connected: pool ? await dbReady : false, provider: pool ? 'Aiven PostgreSQL' : 'local browser storage' });
+// Career memory needs the pgvector extension; keep it separate so the rest of
+// the data layer still works when the extension is unavailable.
+const memoryReady = dbReady.then(ok => ok ? pool.query(MEMORY_SCHEMA_SQL).then(() => true) : false).catch(error => {
+    console.error('Career memory unavailable (pgvector required):', error.message);
+    return false;
 });
+memoryReady.then(ok => {
+    if (!ok) return;
+    const sweep = () => markStaleMemories(pool).then(count => count && console.log(`Marked ${count} memories as stale.`)).catch(error => console.error('Stale sweep failed:', error.message));
+    sweep();
+    setInterval(sweep, 24 * 60 * 60 * 1000).unref();
+    warmEmbeddings().catch(error => console.error('Embedding model failed to load:', error.message));
+});
+const requireMemory = async (req, res, next) => {
+    if (!pool || !await memoryReady) return res.status(503).json({ error: 'Career memory needs Aiven PostgreSQL with the pgvector extension.' });
+    next();
+};
+const memoryRoute = handler => [requireMemory, async (req, res) => {
+    try { await handler(req, res); } catch (error) { console.error('Memory engine error:', error); res.status(400).json({ error: error.message }); }
+}];
+
+app.get('/api/data/status', async (req, res) => {
+    res.json({ configured: Boolean(pool), connected: pool ? await dbReady : false, memory: pool ? await memoryReady : false, provider: pool ? 'Aiven PostgreSQL' : 'local browser storage' });
+});
+
+// ==========================================
+// CAREER MEMORY ENGINE
+// ==========================================
+app.get('/api/memory', ...memoryRoute(async (req, res) => {
+    res.json({ memories: await listMemories(pool, req.query), embeddingModel: EMBEDDING_MODEL });
+}));
+app.post('/api/memory', ...memoryRoute(async (req, res) => {
+    const { kind, content, subjectKey, level } = req.body || {};
+    res.status(201).json(await storeMemory(pool, { kind, content, subjectKey, attributes: level ? { level } : {}, source: 'USER_INPUT' }));
+}));
+app.post('/api/memory/feedback', ...memoryRoute(async (req, res) => {
+    const { jobDescription, feedback, outcome, company, role, applicationId, jobSnapshotId, apiKey } = req.body || {};
+    res.status(201).json({ results: await ingestFeedback(pool, { jobDescription, feedback, outcome, company, role, applicationId, jobSnapshotId, apiKey }) });
+}));
+app.post('/api/memory/retrieve', ...memoryRoute(async (req, res) => {
+    const { jobDescription, runId, k, kinds } = req.body || {};
+    const result = await retrieveMemories(pool, { jobDescription, runId, k: Math.min(Number(k) || 8, 20), kinds });
+    res.json({ ...result, promptBlock: memoryPromptBlock(result.memories) });
+}));
+app.post('/api/memory/runs/:runId/citations', ...memoryRoute(async (req, res) => {
+    res.json({ cited: await markRunCitations(pool, req.params.runId, req.body?.memoryIds || []) });
+}));
+app.get('/api/memory/metrics', ...memoryRoute(async (req, res) => {
+    res.json(await memoryMetrics(pool));
+}));
+app.get('/api/memory/:id/history', ...memoryRoute(async (req, res) => {
+    res.json({ history: await memoryHistory(pool, req.params.id) });
+}));
+app.patch('/api/memory/:id', ...memoryRoute(async (req, res) => {
+    const memory = await updateMemory(pool, req.params.id, req.body || {});
+    if (!memory) return res.status(404).json({ error: 'Memory not found.' });
+    res.json({ memory });
+}));
 
 app.get('/api/data/state', async (req, res) => {
     if (!pool || !await dbReady) return res.status(503).json({ error: 'Aiven PostgreSQL is not connected.' });
@@ -383,7 +439,7 @@ app.post('/api/adapt-deepseek', async (req, res) => {
             body: JSON.stringify({
                 model: 'deepseek-chat',
                 messages: [
-                    { role: 'system', content: 'You are a senior career strategist and copywriter specializing in digital marketing, growth, and tech roles.\n\nCRITICAL OUTPUT RULES:\n- Output ONLY a single raw JSON object. The response MUST start with { and end with }. Zero markdown, zero code fences, zero explanations outside the JSON.\n- Preserve EVERY field name exactly as in the source schema. Do NOT add, remove, or rename keys.\n- All string values must use straight double-quotes. Use only regular hyphens (-), never em dashes (—) or en dashes (–).\n- All array items must remain arrays. All objects must remain objects. Do not flatten, merge, or nest differently.\n\nVOICE & EDITORIAL RULES:\n- Write in a natural, authentic, human voice. Avoid robotic corporate clichés (e.g. "Experienced with", "results-driven professional", "energize your ecosystem").\n- CRITICAL FOR WORK-STUDY: NEVER call the candidate an "expert" or claim "expertise". Frame him as an operational, high-autonomy growth practitioner who learns fast and delivers concrete results.\n- CONNECT THE DOTS: Show the synergy between his creative background (design/UX), data rigor (GA4/GTM), and acquisition channels (SEO, ASO, apps scaled to 2M+ downloads, health information database.\n- COVER LETTER: Tailor the 4-paragraph master blueprint to the company challenges with genuine interest and concrete proof.\n- ATS compliance: mirror exact keywords from the target role in skills and bullets.' },
+                    { role: 'system', content: 'You are a senior career strategist and copywriter specializing in digital marketing, growth, and tech roles.\n\nCRITICAL OUTPUT RULES:\n- Output ONLY a single raw JSON object. The response MUST start with { and end with }. Zero markdown, zero code fences, zero explanations outside the JSON.\n- Preserve EVERY field name exactly as in the source schema. Do NOT add, remove, or rename keys. Only exception: if the prompt contains a CAREER MEMORY block, add a root-level \"_memoryRefsUsed\" array.\n- All string values must use straight double-quotes. Use only regular hyphens (-), never em dashes (—) or en dashes (–).\n- All array items must remain arrays. All objects must remain objects. Do not flatten, merge, or nest differently.\n\nVOICE & EDITORIAL RULES:\n- Write in a natural, authentic, human voice. Avoid robotic corporate clichés (e.g. "Experienced with", "results-driven professional", "energize your ecosystem").\n- CRITICAL FOR WORK-STUDY: NEVER call the candidate an "expert" or claim "expertise". Frame him as an operational, high-autonomy growth practitioner who learns fast and delivers concrete results.\n- CONNECT THE DOTS: Show the synergy between his creative background (design/UX), data rigor (GA4/GTM), and acquisition channels (SEO, ASO, apps scaled to 2M+ downloads, health information database.\n- COVER LETTER: Tailor the 4-paragraph master blueprint to the company challenges with genuine interest and concrete proof.\n- ATS compliance: mirror exact keywords from the target role in skills and bullets.' },
                     { role: 'user', content: prompt }
                 ],
                 temperature: 0.3,
@@ -542,7 +598,18 @@ app.post('/api/generate-interview-kit', async (req, res) => {
         const degreeName = (school === 'hetic') ? "Master's in Digital Marketing & UX" : 'Digital Communication, Social Media and Community Management';
         const rhythm = (school === 'hetic') ? '3 weeks at the company / 1 week at school' : '4 days at the company / 1 day at school';
 
-        const interviewPrompt = `You are an elite executive career coach and interview trainer preparing candidate Alex Morgan for an upcoming interview.
+        let memoryBlock = '';
+        let memories = [];
+        if (pool && await memoryReady && jobDescription) {
+            try {
+                ({ memories } = await retrieveMemories(pool, { jobDescription, runId: appId ? `kit_${appId}_${Date.now()}` : null, k: 6 }));
+                memoryBlock = memoryPromptBlock(memories);
+            } catch (error) {
+                console.warn('Interview kit memory retrieval skipped:', error.message);
+            }
+        }
+
+        const interviewPrompt = `${memoryBlock ? memoryBlock + '\nUse the career memory above to sharpen the elevator pitch and weakness answers.\n\n' : ''}You are an elite executive career coach and interview trainer preparing candidate Alex Morgan for an upcoming interview.
 
 CANDIDATE MASTER PROFILE:
 - Name: Alex Morgan
@@ -686,7 +753,7 @@ Use this exact JSON schema:
             }
         }
 
-        res.json({ kit: parsedKit });
+        res.json({ kit: parsedKit, memories });
     } catch (err) {
         console.error('Interview kit generation exception:', err);
         res.status(500).json({ error: 'Failed to generate interview kit: ' + err.message });
