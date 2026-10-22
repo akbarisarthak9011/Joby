@@ -2353,18 +2353,18 @@ document.addEventListener('change',event=>{
 document.addEventListener('submit',async event=>{
   const form=event.target;if(form.id!=='memory-feedback-form'&&form.id!=='memory-add-form')return;
   event.preventDefault();
-  const data=Object.fromEntries(new FormData(form));const button=form.querySelector('[type="submit"]');
+  const data=Object.fromEntries(new FormData(form));const button=form.querySelector('[type="submit"]');const modal=state.memory.modal;
   button.disabled=true;button.innerHTML='<span>Learning…</span>';
   try{
     if(form.id==='memory-feedback-form'){
       const app=(state.applications||[]).find(a=>a.id===data.applicationId);
       const res=await memoryApi('/feedback',{...data,applicationId:data.applicationId||null,jobDescription:app?.jobDescription||state.job,jobSnapshotId:JSON.parse(localStorage.getItem('joby-job-snapshot')||'null')?.id||null,apiKey:state.deepseekKey||''});
-      state.memory.modal.result=res.results;
+      modal.result=res.results;
     }else{
       const res=await memoryApi('',{kind:data.kind,content:data.content,level:data.level||undefined});
-      state.memory.modal.result=[res];
+      modal.result=[res];
     }
-    renderMemoryModal();toast('Memory saved. Joby will use it for the next draft.');
+    if(state.memory.modal===modal)renderMemoryModal();toast('Memory saved. Joby will use it for the next draft.');
     void refreshMemoryLedger({quiet:true});
   }catch(error){toast(error.message);button.disabled=false;button.innerHTML='Save to memory <span>↗</span>';}
 });

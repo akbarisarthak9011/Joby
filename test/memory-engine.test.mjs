@@ -72,6 +72,9 @@ describe('memory engine on PostgreSQL + pgvector', { skip: !url && 'set MEMORY_T
         assert.deepEqual(rows[0].attributes.conflictsWith, [res.memory.id]);
         const confirmed = await updateMemory(pool, ids.sql, { action: 'confirm' });
         assert.equal(confirmed.status, 'ACTIVE');
+        assert.equal(confirmed.attributes.conflictsWith, undefined);
+        const { rows: [feedback] } = await pool.query('SELECT status FROM joby_memories WHERE id = $1', [res.memory.id]);
+        assert.equal(feedback.status, 'CONTRADICTED');
     });
 
     test('retrieval ranks relevant memories, logs them and records citations', async () => {

@@ -313,7 +313,7 @@ export async function updateMemory(pool, id, { action, content }) {
     const { rows: [memory] } = await pool.query(`SELECT ${PUBLIC_COLUMNS} FROM joby_memories WHERE id = $1`, [id]);
     if (!memory) return null;
     if (action === 'confirm') {
-        await pool.query(`UPDATE joby_memories SET status = 'ACTIVE', last_confirmed_at = now(), confidence = LEAST(1, GREATEST(confidence, 0.8) + 0.1), updated_at = now() WHERE id = $1`, [id]);
+        await pool.query(`UPDATE joby_memories SET status = 'ACTIVE', last_confirmed_at = now(), confidence = LEAST(1, GREATEST(confidence, 0.8) + 0.1), attributes = attributes - 'conflictsWith', updated_at = now() WHERE id = $1`, [id]);
         const conflicts = memory.attributes?.conflictsWith || [];
         if (conflicts.length) await pool.query(`UPDATE joby_memories SET status = 'CONTRADICTED', valid_until = now(), updated_at = now() WHERE id = ANY($1) AND status IN ('ACTIVE','STALE')`, [conflicts]);
     } else if (action === 'archive') {
