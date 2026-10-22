@@ -1,0 +1,105 @@
+{
+  "personal": {
+    "name": "Alex Morgan",
+    "role": "Webmaster & CMS Manager",
+    "subtitle": "CMS Management, Webmastering, Technical SEO & Web Integration",
+    "location": "",
+    "phone": "",
+    "email": "",
+    "linkedin": "",
+    "website": "",
+    "photo": ""
+  },
+  "summary": "Versatile Webmaster combining technical skills, UI/UX design sensitivity, and SEO expertise. Specialized in building, managing, and optimizing websites (WordPress, PrestaShop), I oversee HTML/CSS integration, performance tuning (Core Web Vitals), web security, and content publishing.",
+  "skills": [
+    "WordPress & PrestaShop",
+    "HTML5 & CSS3",
+    "JavaScript (Basics)",
+    "Technical SEO & Core Web Vitals",
+    "Screaming Frog",
+    "Google Search Console",
+    "Yoast SEO / RankMath",
+    "Elementor & Gutenberg",
+    "Google Analytics 4 (GA4)",
+    "Google Tag Manager (GTM)",
+    "Looker Studio",
+    "UI/UX Design (Figma, Adobe XD)",
+    "Hosting & DNS Management",
+    "Web Security & Backups",
+    "Adobe Photoshop & Illustrator",
+    "AI & Web Automation"
+  ],
+  "languages": [
+    "French - Bilingual (C2)",
+    "English - Bilingual (C2)",
+    "Arabic - Native language"
+  ],
+  "certifications": [
+    "Technical SEO & AI Search Essentials - Semrush",
+    "Ahrefs Marketing Platform - Ahrefs",
+    "SEO Essentials with Semrush - Semrush",
+    "Digital Marketing - HubSpot Academy",
+    "Front-End Development - HTML, CSS, JavaScript & Design - Udacity"
+  ],
+  "experience": [
+    {
+      "title": "Digital Marketing & Webmastering Officer",
+      "company": "Orange",
+      "dates": "08/2025 - 02/2026",
+      "location": "Paris, France",
+      "bullets": [
+        "Orange Travel (international eSIM) webmastering: website administration, content integration, and UX optimization",
+        "Technical SEO & Core Web Vitals: page speed optimization, site architecture tuning, and performance audits (GSC)",
+        "Automation & Netlinking: developed AI tools for technical SEO opportunity discovery and site audits"
+      ]
+    },
+    {
+      "title": "Web & Digital Marketing Officer",
+      "company": "Algorithmics",
+      "dates": "09/2023 - 08/2024",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "CMS & Content management: updated web pages, integrated visual assets, and optimized conversion funnel",
+        "Graphic production: created web banners, visual assets, and responsive UI elements for site and campaigns",
+        "Analytics & Tracking: configured audience tracking (GA4, GTM) and reported on web page performance"
+      ]
+    },
+    {
+      "title": "Freelance Webmaster & CMS Specialist",
+      "company": "Independent",
+      "dates": "03/2022 - 08/2023",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "CMS Building & Management: developed and maintained WordPress/PrestaShop sites optimized for search and e-commerce",
+        "Web Integration & Design: built responsive landing pages, HTML/CSS integration, and UI design (Figma)",
+        "Maintenance & Monetization: managed web hosting, security, backups, and ad network integration (AdMob)"
+      ]
+    },
+    {
+      "title": "Web & Digital Marketing Consultant",
+      "company": "Nuelink",
+      "dates": "06/2021 - 02/2022",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Website optimization: redesigned landing and product pages to improve conversion rates and UX",
+        "Content integration: published and formatted SEO-optimized blog articles and web resources",
+        "Visual design: crafted graphic assets and web collaterals to strengthen brand identity"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master's in Digital Marketing and E-commerce",
+      "institution": "ISTEC",
+      "dates": "2026",
+      "location": "Paris, France",
+      "description": ""
+    }
+  ],
+  "coverLetter": {
+    "greeting": "Dear Hiring Manager,",
+    "paragraph": "With proven experience in webmastering, CMS administration, and technical SEO gained at Orange and through independent client projects, I am ready to take full ownership of a website's performance — from development and integration to optimization and reporting. At Orange, I managed the Orange Travel international website, improved Core Web Vitals, and automated SEO auditing processes using AI tooling. My command of WordPress, HTML/CSS, Screaming Frog, and GA4, combined with a strong UX sensibility, positions me to deliver measurable improvements to your web presence.",
+    "closing": "I would welcome the chance to discuss this opportunity further and am available at your convenience.",
+    "signoff": "Sincerely,"
+  }
+}

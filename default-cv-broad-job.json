@@ -1,0 +1,111 @@
+{
+  "personal": {
+    "name": "Alex Morgan",
+    "role": "Digital Marketing Manager",
+    "subtitle": "360° Digital marketing, content strategy & campaign management",
+    "location": "",
+    "phone": "",
+    "email": "",
+    "linkedin": "",
+    "website": "",
+    "photo": ""
+  },
+  "summary": "Trained in design and passionate about 360° digital marketing, I combine strategic vision with hands-on execution. From multi-channel campaign management to SEO/SEA optimization, content creation, and data analytics, I drive performance-oriented digital projects.",
+  "skills": [
+    "360° Marketing Strategy",
+    "Inbound & Outbound Marketing",
+    "SEO / SEA / ASO",
+    "Social Media & Brand Content",
+    "Google Analytics 4 (GA4)",
+    "Looker Studio",
+    "Google Tag Manager (GTM)",
+    "Google Ads",
+    "Meta Ads",
+    "LinkedIn Campaign Manager",
+    "HubSpot",
+    "Brevo",
+    "Mailchimp",
+    "WordPress",
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Premiere Pro",
+    "Figma",
+    "Canva",
+    "HTML5",
+    "CSS3",
+    "AI & Automation"
+  ],
+  "languages": [
+    "French - Bilingual (C2)",
+    "English - Bilingual (C2)",
+    "Arabic - Native language"
+  ],
+  "certifications": [
+    "Technical SEO & AI Search Essentials - Semrush",
+    "Ahrefs Marketing Platform - Ahrefs",
+    "SEO Essentials with Semrush - Semrush",
+    "Digital Marketing - HubSpot Academy",
+    "Front-End Development - HTML, CSS, JavaScript & Design - Udacity"
+  ],
+  "experience": [
+    {
+      "title": "Digital Marketing & Growth Officer",
+      "company": "Orange",
+      "dates": "08/2025 - 02/2026",
+      "location": "Paris, France",
+      "bullets": [
+        "Orange Travel (international eSIM) digital strategy: managed global acquisition, web content, and social media engagement",
+        "360° content creation: art direction and visual/video production for blog and multi-channel campaigns",
+        "Analytics & Performance: KPI tracking (GA4, Looker Studio), inbound marketing optimization, and SEO/netlinking automation"
+      ]
+    },
+    {
+      "title": "Digital Marketing Officer",
+      "company": "Algorithmics",
+      "dates": "09/2023 - 08/2024",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Multichannel & Brand acquisition: deployed organic, paid, and social levers to maximize brand awareness",
+        "Content production: created marketing visual assets, promotional videos, and engagement campaigns",
+        "Digital project management: community management, customer journey redesign, and funnel optimization"
+      ]
+    },
+    {
+      "title": "Freelance Growth & Digital Marketer",
+      "company": "Independent",
+      "dates": "03/2022 - 08/2023",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Launched and grew web & mobile projects: multi-channel acquisition reaching 2M+ cumulative app downloads",
+        "Produced marketing assets (visuals, screenshots, promo videos) and built custom WordPress niche sites for clients",
+        "Monetization strategy and deployment of targeted advertising campaigns (AdMob, Meta, Google Ads)"
+      ]
+    },
+    {
+      "title": "Digital Marketing Consultant",
+      "company": "Nuelink",
+      "dates": "06/2021 - 02/2022",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "360° content and acquisition strategy against established competitors (Buffer, Hootsuite) to expand brand reach",
+        "Funnel optimization: redesigned landing pages and user journeys to boost conversion rates",
+        "Graphic design and creation of marketing collaterals to strengthen overall brand identity"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master's in Digital Marketing and E-commerce",
+      "institution": "ISTEC",
+      "dates": "2026",
+      "location": "Paris, France",
+      "description": ""
+    }
+  ],
+  "coverLetter": {
+    "greeting": "Dear Hiring Manager,",
+    "paragraph": "With over four years of hands-on experience spanning 360° marketing strategy, content creation, community management, and data analytics, I have developed a well-rounded digital marketing skill set backed by real results. At Orange, Algorithmics, and Nuelink, I planned and executed multichannel campaigns, managed brand communities, and consistently optimized performance using GA4, Looker Studio, and a range of marketing platforms. Bilingual in French and English and continuously developing my AI and automation expertise, I am ready to contribute strategically and operationally to your team from day one.",
+    "closing": "I would welcome the opportunity to discuss this position further and am available at your earliest convenience.",
+    "signoff": "Sincerely,"
+  }
+}

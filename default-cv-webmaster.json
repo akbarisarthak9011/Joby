@@ -1,0 +1,113 @@
+{
+  "personal": {
+    "name": "Alex Morgan",
+    "role": "Webmaster & CMS Manager",
+    "subtitle": "Work-study candidate (4 days company / 1 day school)",
+    "location": "",
+    "phone": "",
+    "email": "",
+    "linkedin": "",
+    "website": "",
+    "photo": ""
+  },
+  "summary": "Versatile Webmaster combining technical skills, UI/UX design sensitivity, and SEO expertise. Specialized in building, managing, and optimizing websites (WordPress, PrestaShop), I oversee HTML/CSS integration, performance tuning (Core Web Vitals), web security, and content publishing.",
+  "skills": [
+    "WordPress & PrestaShop",
+    "HTML5 & CSS3",
+    "JavaScript (Basics)",
+    "Technical SEO & Core Web Vitals",
+    "Screaming Frog",
+    "Google Search Console",
+    "Yoast SEO / RankMath",
+    "Elementor & Gutenberg",
+    "Google Analytics 4 (GA4)",
+    "Google Tag Manager (GTM)",
+    "Looker Studio",
+    "UI/UX Design (Figma, Adobe XD)",
+    "Hosting & DNS Management",
+    "Web Security & Backups",
+    "Adobe Photoshop & Illustrator",
+    "AI & Web Automation"
+  ],
+  "languages": [
+    "French - Bilingual (C2)",
+    "English - Bilingual (C2)",
+    "Arabic - Native language"
+  ],
+  "certifications": [
+    "Technical SEO & AI Search Essentials - Semrush",
+    "Ahrefs Marketing Platform - Ahrefs",
+    "SEO Essentials with Semrush - Semrush",
+    "Digital Marketing - HubSpot Academy",
+    "Front-End Development - HTML, CSS, JavaScript & Design - Udacity"
+  ],
+  "experience": [
+    {
+      "title": "Digital Marketing & Webmastering Officer",
+      "company": "Orange",
+      "dates": "08/2025 - 02/2026",
+      "location": "Paris, France",
+      "bullets": [
+        "Orange Travel (international eSIM) webmastering: website administration, content integration, and UX optimization",
+        "Technical SEO & Core Web Vitals: page speed optimization, site architecture tuning, and performance audits (GSC)",
+        "Automation & Netlinking: developed AI tools for technical SEO opportunity discovery and site audits"
+      ]
+    },
+    {
+      "title": "Web & Digital Marketing Officer",
+      "company": "Algorithmics",
+      "dates": "09/2023 - 08/2024",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "CMS & Content management: updated web pages, integrated visual assets, and optimized conversion funnel",
+        "Graphic production: created web banners, visual assets, and responsive UI elements for site and campaigns",
+        "Analytics & Tracking: configured audience tracking (GA4, GTM) and reported on web page performance"
+      ]
+    },
+    {
+      "title": "Freelance Webmaster & CMS Specialist",
+      "company": "Independent",
+      "dates": "03/2022 - 08/2023",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "CMS Building & Management: developed and maintained WordPress/PrestaShop sites optimized for search and e-commerce",
+        "Web Integration & Design: built responsive landing pages, HTML/CSS integration, and UI design (Figma)",
+        "Maintenance & Monetization: managed web hosting, security, backups, and ad network integration (AdMob)"
+      ]
+    },
+    {
+      "title": "Web & Digital Marketing Consultant",
+      "company": "Nuelink",
+      "dates": "06/2021 - 02/2022",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Website optimization: redesigned landing and product pages to improve conversion rates and UX",
+        "Content integration: published and formatted SEO-optimized blog articles and web resources",
+        "Visual design: crafted graphic assets and web collaterals to strengthen brand identity"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Digital Communication, Social Media and Community Management",
+      "institution": "ISCOM",
+      "dates": "September 2026 (Work-study)",
+      "location": "Paris, France",
+      "description": ""
+    },
+    {
+      "degree": "Master's in Digital Marketing and E-commerce",
+      "institution": "ISTEC",
+      "dates": "2026",
+      "location": "Paris, France",
+      "description": ""
+    }
+  ],
+  "coverLetter": {
+    "subject": "Work-Study Application – Digital Marketing & Growth (4 days company / 1 day school)",
+    "greeting": "Dear Hiring Manager,",
+    "paragraph": "Attentive to your company's digital innovations and web development initiatives, I am eager to propose my candidacy as a work-study Webmaster to manage your digital platforms, optimize web performance, and boost discoverability.\n\nDriven by an entrepreneurial and self-taught mindset, I combine technical execution with UI/UX sensibility. This approach has enabled me to independently build high-impact web products: scaling self-published mobile applications to over 2M+ cumulative downloads, and developing a health information database for people living with irritable bowel syndrome.\n\nOperationally, I bring proven execution across CMS management (WordPress, WooCommerce, PrestaShop), front-end integration, and organic search (SEO, ASO, GEO). I also leverage AI on a daily basis to build custom automations that streamline content operations and technical audits, while maintaining strict critical judgment over outputs. Fully fluent in English (C2 level), French, and Arabic, I collaborate effectively in international teams.\n\nCurrently admitted to the Digital Communication, Social Media and Community Management program at ISCOM on a 4-day company / 1-day school schedule, I am eager to channel this autonomy and web execution power into your team's ambitions.\n\n",
+    "closing": "I would welcome the opportunity to discuss how my background aligns with your upcoming goals during an interview.",
+    "signoff": "Sincerely,"
+  }
+}

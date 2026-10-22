@@ -1,0 +1,139 @@
+{
+  "personal": {
+    "name": "Alex Morgan",
+    "role": "Digital Marketing & SEO",
+    "subtitle": "Work-study candidate (4 days company / 1 day school)",
+    "location": "",
+    "phone": "",
+    "email": "",
+    "linkedin": "",
+    "website": "",
+    "photo": ""
+  },
+  "summary": "I started in design before moving naturally into marketing. This creative perspective and data-driven mindset helped scale my mobile applications to more than 2M downloads. I am ready to apply this dual expertise to support sustainable growth.",
+  "skills": [
+    "Multichannel acquisition strategy",
+    "SEO / SEA / ASO",
+    "CRO & Funnel Marketing",
+    "AI & Automation",
+    "Semrush",
+    "Ahrefs",
+    "Google Search Console",
+    "Screaming Frog",
+    "Moz",
+    "Ubersuggest",
+    "Yoast SEO / RankMath",
+    "AppTweak",
+    "Google Analytics 4 (GA4)",
+    "Looker Studio",
+    "Google Tag Manager (GTM)",
+    "Excel",
+    "Google Ads",
+    "Meta Ads",
+    "LinkedIn Campaign Manager",
+    "TikTok Ads Manager",
+    "X (Twitter) Ads",
+    "Google AdMob",
+    "Meta Audience Network",
+    "HubSpot",
+    "Brevo",
+    "Mailchimp",
+    "WordPress",
+    "Prestashop",
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Premiere Pro",
+    "Adobe After Effects",
+    "Figma",
+    "Canva",
+    "CapCut",
+    "ChatGPT (Prompt Engineering)",
+    "Midjourney / DALL-E",
+    "Notion",
+    "HTML5",
+    "CSS3",
+    "JavaScript (Basics)",
+    "Python (Basics)"
+  ],
+  "languages": [
+    "French - Bilingual (C2)",
+    "English - Bilingual (C2)",
+    "Arabic - Native language"
+  ],
+  "certifications": [
+    "Technical SEO & AI Search Essentials - Semrush",
+    "Ahrefs Marketing Platform - Ahrefs",
+    "SEO Essentials with Semrush - Semrush",
+    "Digital Marketing - HubSpot Academy",
+    "Front-End Development - HTML, CSS, JavaScript & Design - Udacity"
+  ],
+  "experience": [
+    {
+      "title": "Digital Marketing & Growth Officer",
+      "company": "Orange",
+      "dates": "08/2025 - 02/2026",
+      "location": "Paris, France",
+      "bullets": [
+        "Orange Travel (international eSIM) digital strategy: managed acquisition, web content and social media",
+        "Content creation: produced visuals and videos for blog content and social media campaigns",
+        "Analytics & SEO: monitored GA4 and Looker Studio performance, optimised for AI search (GEO), and developed an AI automation tool for netlinking opportunity identification"
+      ]
+    },
+    {
+      "title": "Digital Marketing Officer",
+      "company": "Algorithmics",
+      "dates": "09/2023 - 08/2024",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Multichannel acquisition: deployed organic, paid and social levers to increase registrations",
+        "Content creation: produced visuals, promotional videos and animated formats",
+        "Social media & funnel: managed communities and continuously optimised the conversion funnel"
+      ]
+    },
+    {
+      "title": "Freelance Growth & Digital Marketer",
+      "company": "Independent",
+      "dates": "03/2022 - 08/2023",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Launched and grew multiple Android mobile apps through ASO and targeted marketing, reaching 2M+ cumulative downloads",
+        "Produced marketing assets including visuals, screenshots and presentation videos using Adobe tools",
+        "Managed multi-source monetisation with AdMob, Audience Network and in-app purchases, plus WordPress niche sites for clients"
+      ]
+    },
+    {
+      "title": "Digital Marketing Consultant",
+      "company": "Nuelink",
+      "dates": "06/2021 - 02/2022",
+      "location": "Tetouan, Morocco",
+      "bullets": [
+        "Built content and acquisition strategy against established competitors including Buffer and Hootsuite",
+        "Optimised the funnel by redesigning landing and product pages to improve conversion",
+        "Created visuals and marketing materials to strengthen brand identity across digital channels"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Digital Communication, Social Media and Community Management",
+      "institution": "ISCOM",
+      "dates": "September 2026 (Work-study)",
+      "location": "Paris, France",
+      "description": ""
+    },
+    {
+      "degree": "Master's in Digital Marketing and E-commerce",
+      "institution": "ISTEC",
+      "dates": "2026",
+      "location": "Paris, France",
+      "description": ""
+    }
+  ],
+  "coverLetter": {
+    "subject": "Work-Study Application – Digital Marketing & Growth (4 days company / 1 day school)",
+    "greeting": "Dear Hiring Manager,",
+    "paragraph": "Attentive to your company's digital innovations and growth trajectory, I am eager to propose my candidacy as a work-study candidate to actively contribute to your digital expansion and international visibility.\n\nDriven by an entrepreneurial and self-taught mindset, I combine creative intuition with technical execution. This approach has enabled me to independently build high-impact digital products: scaling self-published mobile applications to over 2M+ cumulative downloads, and developing a health information database for people living with irritable bowel syndrome.\n\nOperationally, I bring proven execution across organic search (SEO, ASO, GEO), CMS management (WordPress), and performance analytics (GA4). I also leverage AI on a daily basis to build custom automations that streamline operations, while maintaining strict critical judgment over outputs. Fully fluent in English (C2 level), French, and Arabic, with a solid grasp of international and African markets, I navigate multicultural environments with ease.\n\nCurrently admitted to the Digital Communication, Social Media and Community Management program at ISCOM on a 4-day company / 1-day school schedule, I am eager to channel this autonomy and problem-solving drive into your team's ambitions.\n\n",
+    "closing": "I would welcome the opportunity to discuss how my background aligns with your upcoming goals during an interview.",
+    "signoff": "Sincerely,"
+  }
+}

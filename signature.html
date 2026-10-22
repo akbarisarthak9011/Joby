@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Signatures - Sample Profile</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #f8fafc; color: #0f172a; padding: 30px 20px; line-height: 1.5; }
+    .container { max-width: 860px; margin: 0 auto; }
+    .header { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; }
+    .badge { display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 700; color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 999px; margin-bottom: 10px; }
+    h1 { font-size: 22px; font-weight: 800; color: #0f172a; }
+    .subtitle { font-size: 13px; color: #64748b; margin-top: 4px; }
+    .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #f1f5f9; }
+    .btn-group { display: flex; gap: 6px; }
+    .school-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer; transition: all 0.2s; }
+    .school-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+    .styles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 14px; }
+    .tab-btn { padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; text-align: left; cursor: pointer; transition: all 0.2s; }
+    .tab-btn strong { display: block; font-size: 12px; color: #1e293b; }
+    .tab-btn small { font-size: 11px; color: #64748b; }
+    .tab-btn.active { background: #eff6ff; border-color: #2563eb; }
+    .tab-btn.active strong { color: #1d4ed8; }
+    
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 24px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; }
+    .preview-box { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; min-height: 120px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+    
+    .btn-primary { background: #2563eb; color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(37,99,235,0.3); transition: all 0.2s; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    
+    .instructions { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-top: 18px; font-size: 12.5px; color: #1e3a8a; }
+    .instructions ol { margin-left: 20px; margin-top: 6px; }
+    .instructions li { margin-bottom: 4px; }
+
+    .toast { position: fixed; bottom: 25px; right: 25px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); opacity: 0; transform: translateY(20px); transition: all 0.3s; z-index: 999; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="badge">✉️ Compatible Outlook, Gmail, Apple Mail</span>
+      <h1>Signatures Email Professionnelles</h1>
+      <p class="subtitle">Sélectionnez votre modèle, puis cliquez sur <strong>« Copier la signature »</strong> pour la coller directement dans vos paramètres de messagerie.</p>
+      
+      <div class="controls">
+        <div style="font-size:12px; font-weight:700; color:#475569;">École pour l'alternance :</div>
+        <div class="btn-group">
+          <button id="btn-iscom" class="school-btn active" onclick="setSchool('iscom')">🎓 ISCOM (4j/1j)</button>
+          <button id="btn-hetic" class="school-btn" onclick="setSchool('hetic')">🏛️ HETIC (3s/1s)</button>
+        </div>
+      </div>
+
+      <div class="styles-grid">
+        <button id="tab-1" class="tab-btn active" onclick="setStyle(1)">
+          <strong>1. Alternance Recrutement</strong>
+          <small>Recommandé (Rythme & École)</small>
+        </button>
+        <button id="tab-2" class="tab-btn" onclick="setStyle(2)">
+          <strong>2. Minimaliste Épuré</strong>
+          <small>Sobre, compact & élégant</small>
+        </button>
+        <button id="tab-3" class="tab-btn" onclick="setStyle(3)">
+          <strong>3. Growth Builder</strong>
+          <small>Projets, 2M apps & FODMAP</small>
+        </button>
+        <button id="tab-4" class="tab-btn" onclick="setStyle(4)">
+          <strong>4. International / English</strong>
+          <small>Pour candidatures en anglais</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <div style="font-size:13px; font-weight:700; color:#334155;">Aperçu Visuel de la Signature</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-primary" onclick="copyRichText()">
+            <span>📋</span> Copier la signature (Format enrichi)
+          </button>
+          <button class="btn-secondary" onclick="copyPlainText()">
+            Texte brut
+          </button>
+          <button class="btn-secondary" onclick="copyHtml()">
+            Code HTML
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-box" id="preview-box">
+        <!-- Rendered signature -->
+      </div>
+
+      <div class="instructions">
+        <strong>💡 Comment l'insérer dans votre messagerie :</strong>
+        <ol>
+          <li>Cliquez sur le bouton bleu <strong>« Copier la signature (Format enrichi) »</strong>.</li>
+          <li>Dans <strong>Outlook</strong> : allez dans <em>Paramètres ⚙️ &gt; Courrier &gt; Composer et répondre &gt; Signature électronique</em>.</li>
+          <li>Dans <strong>Gmail</strong> : allez dans <em>Paramètres ⚙️ &gt; Voir tous les paramètres &gt; Général &gt; Signature</em>.</li>
+          <li>Faites simplement <strong>Ctrl + V</strong> (ou Cmd + V sur Mac) dans le champ de signature, puis enregistrez !</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Signature copied to clipboard!</div>
+
+  <script>
+    let currentSchool = 'iscom';
+    let currentStyle = 1;
+
+    const data = {
+      name: 'Alex Morgan',
+      phone: '',
+      phoneClean: '',
+      email: '',
+      website: '',
+      websiteUrl: 'https://',
+      linkedin: '',
+      linkedinUrl: 'https://www.',
+      fodmapUrl: '',
+      schools: {
+        iscom: {
+          name: 'ISCOM',
+          rhythmFr: '4 jours entreprise / 1 jour école',
+          rhythmEn: '4 days company / 1 day school'
+        },
+        hetic: {
+          name: 'HETIC',
+          rhythmFr: '3 semaines entreprise / 1 semaine école',
+          rhythmEn: '3 weeks company / 1 week school'
+        }
+      }
+    };
+
+    function setSchool(sch) {
+      currentSchool = sch;
+      document.getElementById('btn-iscom').className = 'school-btn ' + (sch === 'iscom' ? 'active' : '');
+      document.getElementById('btn-hetic').className = 'school-btn ' + (sch === 'hetic' ? 'active' : '');
+      render();
+    }
+
+    function setStyle(idx) {
+      currentStyle = idx;
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('tab-' + i).className = 'tab-btn ' + (i === idx ? 'active' : '');
+      }
+      render();
+    }
+
+    function getHtml(style, schKey) {
+      const sch = data.schools[schKey];
+      if (style === 1) {
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:13px; line-height:1.45; color:#1e293b;">
+  <tr>
+    <td style="padding-right:16px; border-right:3px solid #2563eb; vertical-align:middle; text-align:center;">
+      <div style="width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-weight:800; font-size:18px; line-height:48px; text-align:center; letter-spacing:-0.5px;">FS</div>
+    </td>
+    <td style="padding-left:16px; vertical-align:middle;">
+      <div style="font-size:16px; font-weight:800; color:#0f172a; letter-spacing:-0.3px;">${data.name}</div>
+      <div style="font-size:12.5px; font-weight:600; color:#2563eb; margin-top:2px;">
+        Marketing Digital &amp; Growth <span style="color:#94a3b8; font-weight:400;">·</span> Candidat à l'alternance
+      </div>
+      <div style="margin-top:4px; font-size:11.5px; color:#475569;">
+        <span style="display:inline-block; background:#eff6ff; color:#1d4ed8; padding:2px 7px; border-radius:4px; font-weight:700; border:1px solid #bfdbfe; font-size:11px;">${sch.name} (${sch.rhythmFr})</span>
+      </div>
+      <div style="margin-top:7px; font-size:11.5px; color:#64748b; line-height:1.5;">
+        <a href="tel:${data.phoneClean}" style="color:#334155; text-decoration:none; font-weight:600;">${data.phone}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="mailto:${data.email}" style="color:#334155; text-decoration:none;">${data.email}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="${data.websiteUrl}" target="_blank" style="color:#2563eb; text-decoration:none; font-weight:700;">${data.website}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="${data.linkedinUrl}" target="_blank" style="color:#0a66c2; text-decoration:none; font-weight:600;">LinkedIn</a>
+      </div>
+    </td>
+  </tr>
+</table>`;
+      } else if (style === 2) {
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:12.5px; line-height:1.4; color:#334155;">
+  <tr>
+    <td style="padding-left:0; vertical-align:top;">
+      <div style="font-size:15px; font-weight:800; color:#0f172a; letter-spacing:-0.2px;">${data.name}</div>
+      <div style="font-size:12px; color:#64748b; margin-top:1px;">
+        Marketing Digital · SEO &amp; Acquisition · Alternance ${sch.name} (${sch.rhythmFr})
+      </div>
+      <div style="margin-top:6px; font-size:11.5px; color:#64748b;">
+        <span style="color:#0f172a; font-weight:600;">${data.phone}</span>
+        <span style="color:#cbd5e1; margin:0 5px;">/</span>
+        <a href="mailto:${data.email}" style="color:#64748b; text-decoration:none;">${data.email}</a>
+        <span style="color:#cbd5e1; margin:0 5px;">/</span>
+        <a href="${data.websiteUrl}" target="_blank" style="color:#2563eb; text-decoration:none; font-weight:600;">${data.website}</a>
+        <span style="color:#cbd5e1; margin:0 5px;">/</span>
+        <a href="${data.linkedinUrl}" target="_blank" style="color:#0a66c2; text-decoration:none;">${data.linkedin}</a>
+      </div>
+    </td>
+  </tr>
+</table>`;
+      } else if (style === 3) {
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:13px; line-height:1.45; color:#1e293b;">
+  <tr>
+    <td style="border-left:3px solid #2563eb; padding-left:14px; vertical-align:top;">
+      <div style="font-size:16px; font-weight:800; color:#0f172a;">${data.name}</div>
+      <div style="font-size:12.5px; font-weight:600; color:#2563eb; margin-top:1px;">
+        Growth Marketing &amp; Acquisition <span style="font-weight:400; color:#64748b;">· ${sch.name} (${sch.rhythmFr})</span>
+      </div>
+      <div style="margin-top:5px; font-size:11.5px; color:#475569;">
+        🚀 <strong>2M+</strong> téléchargements apps mobiles <span style="color:#cbd5e1; margin:0 3px;">·</span> 
+        🌐 Built <a href="${data.fodmapUrl}" target="_blank" style="color:#0284c7; text-decoration:none; font-weight:600;">a health information database</a>
+      </div>
+      <div style="margin-top:6px; font-size:11.5px; color:#64748b;">
+        📞 <a href="tel:${data.phoneClean}" style="color:#334155; text-decoration:none;">${data.phone}</a>
+        <span style="color:#cbd5e1; margin:0 5px;">|</span>
+        🎯 <a href="${data.websiteUrl}" target="_blank" style="color:#2563eb; text-decoration:none; font-weight:700;">${data.website}</a>
+        <span style="color:#cbd5e1; margin:0 5px;">|</span>
+        🔗 <a href="${data.linkedinUrl}" target="_blank" style="color:#0a66c2; text-decoration:none; font-weight:600;">${data.linkedin}</a>
+      </div>
+    </td>
+  </tr>
+</table>`;
+      } else {
+        return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:13px; line-height:1.45; color:#1e293b;">
+  <tr>
+    <td style="padding-right:16px; border-right:3px solid #2563eb; vertical-align:middle; text-align:center;">
+      <div style="width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg, #0f172a, #1e293b); color:#ffffff; font-weight:800; font-size:18px; line-height:48px; text-align:center;">FS</div>
+    </td>
+    <td style="padding-left:16px; vertical-align:middle;">
+      <div style="font-size:16px; font-weight:800; color:#0f172a; letter-spacing:-0.3px;">${data.name}</div>
+      <div style="font-size:12.5px; font-weight:600; color:#2563eb; margin-top:2px;">
+        Digital Marketing &amp; Growth Practitioner <span style="color:#94a3b8; font-weight:400;">·</span> Work-Study Candidate
+      </div>
+      <div style="margin-top:3px; font-size:11.5px; color:#475569;">
+        ${sch.name} Paris <span style="color:#94a3b8;">(${sch.rhythmEn})</span>
+      </div>
+      <div style="margin-top:7px; font-size:11.5px; color:#64748b;">
+        <a href="tel:${data.phoneClean}" style="color:#334155; text-decoration:none; font-weight:600;">${data.phone}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="mailto:${data.email}" style="color:#334155; text-decoration:none;">${data.email}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="${data.websiteUrl}" target="_blank" style="color:#2563eb; text-decoration:none; font-weight:700;">${data.website}</a>
+        <span style="color:#cbd5e1; margin:0 4px;">|</span>
+        <a href="${data.linkedinUrl}" target="_blank" style="color:#0a66c2; text-decoration:none; font-weight:600;">LinkedIn</a>
+      </div>
+    </td>
+  </tr>
+</table>`;
+      }
+    }
+
+    function getPlainText(style, schKey) {
+      const sch = data.schools[schKey];
+      if (style === 1) {
+        return `${data.name}
+Marketing Digital & Growth | Candidat à l'alternance
+${sch.name} (${sch.rhythmFr})
+${data.phone} | ${data.email}
+Portfolio : ${data.websiteUrl}
+LinkedIn : ${data.linkedinUrl}`;
+      } else if (style === 2) {
+        return `${data.name}
+Marketing Digital · SEO & Acquisition · Alternance ${sch.name} (${sch.rhythmFr})
+${data.phone} / ${data.email} / ${data.website} / ${data.linkedin}`;
+      } else if (style === 3) {
+        return `${data.name}
+Growth Marketing & Acquisition · ${sch.name} (${sch.rhythmFr})
+• 2M+ téléchargements sur apps mobiles
+• Plateforme web : ${data.fodmapUrl}
+Tél : ${data.phone} | Portfolio : ${data.websiteUrl} | LinkedIn : ${data.linkedinUrl}`;
+      } else {
+        return `${data.name}
+Digital Marketing & Growth Practitioner · Work-Study Candidate
+${sch.name} Paris (${sch.rhythmEn})
+${data.phone} | ${data.email}
+Portfolio: ${data.websiteUrl} | LinkedIn: ${data.linkedinUrl}`;
+      }
+    }
+
+    function render() {
+      document.getElementById('preview-box').innerHTML = getHtml(currentStyle, currentSchool);
+    }
+
+    async function copyRichText() {
+      const html = getHtml(currentStyle, currentSchool);
+      const text = getPlainText(currentStyle, currentSchool);
+      try {
+        if (navigator.clipboard && window.ClipboardItem) {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': new Blob([html], { type: 'text/html' }),
+              'text/plain': new Blob([text], { type: 'text/plain' })
+            })
+          ]);
+          toast('✓ Signature copiée ! Vous pouvez la coller directement (Ctrl+V) dans votre boîte mail.');
+        } else {
+          fallbackCopy();
+        }
+      } catch (e) {
+        fallbackCopy();
+      }
+    }
+
+    function fallbackCopy() {
+      const el = document.getElementById('preview-box');
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      toast('✓ Signature sélectionnée et copiée !');
+    }
+
+    async function copyPlainText() {
+      await navigator.clipboard.writeText(getPlainText(currentStyle, currentSchool));
+      toast('✓ Format texte brut copié !');
+    }
+
+    async function copyHtml() {
+      await navigator.clipboard.writeText(getHtml(currentStyle, currentSchool));
+      toast('✓ Code HTML copié !');
+    }
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    render();
+  </script>
+</body>
+</html>
